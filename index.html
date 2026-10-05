@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Empleo: El Escape Room del Candidato - UD1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .option-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="text-white flex flex-col justify-between min-h-screen p-4">
+
+    <!-- Header -->
+    <header class="max-w-4xl mx-auto w-full flex justify-between items-center py-4 px-6 glass-card rounded-2xl mb-6 shadow-xl">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-indigo-600 rounded-xl shadow-lg">
+                <i class="fas fa-user-tie text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Misión Empleo</h1>
+                <p class="text-xs text-indigo-300">Repaso UD1: Búsqueda de Empleo</p>
+            </div>
+        </div>
+        <div id="stats-container" class="hidden flex items-center gap-6">
+            <div class="text-center">
+                <p class="text-xs text-gray-400">Progreso</p>
+                <p id="progress-text" class="font-bold text-indigo-400">1 / 10</p>
+            </div>
+            <div class="text-center">
+                <p class="text-xs text-gray-400">Puntuación</p>
+                <p id="score-text" class="font-bold text-emerald-400">0 pts</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center">
+        
+        <!-- Screen 1: Start Screen -->
+        <div id="start-screen" class="glass-card rounded-3xl p-8 md:p-12 text-center shadow-2xl">
+            <div class="w-24 h-24 bg-indigo-600/30 rounded-full flex items-center justify-center mx-auto mb-6 border border-indigo-400/30 pulse-animation">
+                <i class="fas fa-lock-open text-4xl text-indigo-400"></i>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4 bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 bg-clip-text text-transparent">
+                ¿Conseguirás el Empleo Soñado?
+            </h2>
+            <p class="text-gray-300 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed">
+                Has sido preseleccionado para el puesto de tus sueños, pero para firmar el contrato debes superar 10 pruebas variadas: opción única, verdadero/falso, ordenación de fases y selección múltiple (varias correctas).
+            </p>
+            <button onclick="startGame()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-play mr-2"></i> Comenzar el Desafío
+            </button>
+        </div>
+
+        <!-- Screen 2: Game Area -->
+        <div id="game-screen" class="hidden glass-card rounded-3xl p-6 md:p-10 shadow-2xl">
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-700/50 rounded-full h-2.5 mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 10%"></div>
+            </div>
+
+            <!-- Question Tag & Title -->
+            <div class="mb-6">
+                <span id="question-tag" class="text-xs uppercase tracking-wider bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30">
+                    Categoría
+                </span>
+                <h3 id="question-text" class="text-xl md:text-2xl font-semibold mt-3 text-white leading-snug">
+                    Texto de la pregunta...
+                </h3>
+            </div>
+
+            <!-- Options / Interactive Area -->
+            <div id="options-container" class="grid grid-cols-1 gap-3.5 mb-6">
+                <!-- Options, Order items, or Multi-select injected dynamically -->
+            </div>
+
+            <!-- Feedback & Next Button -->
+            <div id="feedback-container" class="hidden p-4 rounded-xl mb-4 border transition-all duration-300">
+                <div class="flex items-start gap-3">
+                    <i id="feedback-icon" class="text-xl mt-0.5"></i>
+                    <div>
+                        <h4 id="feedback-title" class="font-bold text-sm"></h4>
+                        <p id="feedback-text" class="text-xs md:text-sm mt-1 opacity-90 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                Siguiente Prueba <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Screen 3: End Screen -->
+        <div id="end-screen" class="hidden glass-card rounded-3xl p-8 md:p-12 text-center shadow-2xl">
+            <div id="end-icon-container" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border">
+                <i id="end-icon" class="text-4xl"></i>
+            </div>
+            <h2 id="end-title" class="text-3xl font-extrabold mb-2"></h2>
+            <p id="end-subtitle" class="text-indigo-200 text-sm mb-6"></p>
+
+            <div class="bg-black/20 rounded-2xl p-6 max-w-sm mx-auto mb-8 border border-white/10">
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Puntuación Final</p>
+                <p id="final-score" class="text-4xl font-extrabold text-emerald-400 mb-2">0/10</p>
+                <p id="final-eval" class="text-xs text-gray-300 italic"></p>
+            </div>
+
+            <button onclick="resetGame()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg transition-all transform hover:scale-105">
+                <i class="fas fa-redo mr-2"></i> Volver a Intentar
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-gray-400">
+        Material de Repaso - Itinerario Personal para la Empleabilidad II | CEAC[cite: 1]
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                tag: "Búsqueda Directa e Indirecta",
+                type: "multiple",
+                question: "Estás buscando empleo y decides asistir a una Feria de Empleo y conectar con profesionales del sector en un evento. ¿Qué tipo de fuente estás utilizando?",
+                options: [
+                    { text: "Fuente directa, porque interactúas directamente con las empresas.", isCorrect: false, rationale: "Incorrecto. Las fuentes directas corresponden a ofertas concretas y publicadas." },
+                    { text: "Fuente indirecta, porque facilita contactos y networking sin presentar una oferta inmediata.", isCorrect: true, rationale: "¡Correcto! El networking y las ferias de empleo son fuentes indirectas que permiten conocer oportunidades antes de que se publiquen." },
+                    { text: "Autocandidatura activa, pues estás enviando tu CV impreso.", isCorrect: false, rationale: "Incorrecto. Asistir a eventos de networking es una fuente indirecta." },
+                    { text: "Canal público de intermediación laboral.", isCorrect: false, rationale: "Incorrecto. Salvo que sea del SEPE, se considera un canal de networking." }
+                ]
+            },
+            {
+                tag: "Selección Múltiple (Varias Respuestas)",
+                type: "checkbox",
+                question: "Selecciona cuáles de las siguientes herramientas o plataformas son oficiales de la Unión Europea para la movilidad laboral y el empleo (¡pueden ser varias!):",
+                options: [
+                    { text: "Red EURES", isCorrect: true },
+                    { text: "Europass", isCorrect: true },
+                    { text: "InfoJobs Europa", isCorrect: false },
+                    { text: "LinkedIn Global", isCorrect: false }
+                ],
+                rationale: "¡Correcto! EURES y Europass son iniciativas institucionales oficiales de la Unión Europea. InfoJobs y LinkedIn son privadas."
+            },
+            {
+                tag: "Ordenación de Fases",
+                type: "order",
+                question: "Ordena cronológicamente las fases habituales de un proceso de selección corporativo estándar (desde el principio hasta la contratación):",
+                items: [
+                    { id: 1, text: "Preselección curricular y filtros automáticos (ATS)" },
+                    { id: 2, text: "Pruebas psicométricas y técnicas o test de competencias" },
+                    { id: 3, text: "Entrevista de trabajo (individual o por competencias)" },
+                    { id: 4, text: "Prueba médica, referencias y firma del contrato" }
+                ],
+                correctOrder: [1, 2, 3, 4],
+                rationale: "¡Correcto! El flujo típico comienza filtrando currículums, pasa por pruebas y entrevistas, y concluye con la contratación."
+            },
+            {
+                tag: "Verdadero o Falso",
+                type: "multiple",
+                question: "Verdadero o Falso: Las ETT (Empresas de Trabajo Temporal) solo pueden operar en el sector público seleccionando funcionarios de carrera.",
+                options: [
+                    { text: "Verdadero", isCorrect: false, rationale: "Incorrecto. Las ETTs operan exclusivamente en el ámbito privado." },
+                    { text: "Falso", isCorrect: true, rationale: "¡Correcto! Las ETT operan en el ámbito privado y mercantil, estando excluidas de la Administración Pública." }
+                ]
+            },
+            {
+                tag: "Estrategias de Búsqueda de Empleo",
+                type: "multiple",
+                question: "Enviarle tu Currículum y carta de presentación a una empresa sin que haya publicado una oferta concreta se conoce como:",
+                options: [
+                    { text: "Networking pasivo.", isCorrect: false, rationale: "Incorrecto. No se trata de crear una red de contactos indirecta." },
+                    { text: "Autocandidatura.", isCorrect: true, rationale: "¡Correcto! La autocandidatura es la iniciativa de postular proactivamente a empresas." },
+                    { text: "Inscripción en bolsa pública.", isCorrect: false, rationale: "Incorrecto. Las bolsas públicas requieren convocatorias oficiales." },
+                    { text: "Headhunting.", isCorrect: false, rationale: "Incorrecto. El headhunting busca al profesional externamente." }
+                ]
+            },
+            {
+                tag: "Selección Múltiple (Varias Respuestas)",
+                type: "checkbox",
+                question: "Indica qué elementos forman parte de una correcta gestión y construcción de la Marca Personal (¡selecciona todas las correctas!):",
+                options: [
+                    { text: "Coherencia entre tu identidad digital y profesional", isCorrect: true },
+                    { text: "Aportación de valor y diferenciación en tu sector", isCorrect: true },
+                    { text: "Publicar polémicas personales continuas para llamar la atención", isCorrect: false },
+                    { text: "Cuidar la huella digital en redes profesionales como LinkedIn", isCorrect: true }
+                ],
+                rationale: "¡Excelente! La marca personal requiere coherencia, valor diferencial y buena gestión de huella digital."
+            },
+            {
+                tag: "Verdadero o Falso",
+                type: "multiple",
+                question: "Verdadero o Falso: El 'mercado oculto de trabajo' hace referencia exclusivamente a ofertas ilegales o de empleo sumergido que no se pueden legalizar.",
+                options: [
+                    { text: "Verdadero", isCorrect: false, rationale: "Incorrecto. El mercado oculto son puestos cubiertos por contactos o autocandidatura sin publicar." },
+                    { text: "Falso", isCorrect: true, rationale: "¡Correcto! Son vacantes que las empresas cubren internamente o por recomendación sin difusión pública." }
+                ]
+            },
+            {
+                tag: "Procesos de Selección Avanzados",
+                type: "multiple",
+                question: "Una empresa te convoca a una jornada donde harás entrevistas, pruebas psicométricas y simulaciones grupales evaluadas de forma integral. ¿Cómo se denomina?",
+                options: [
+                    { text: "Entrevista estructurada por competencias.", isCorrect: false, rationale: "Incorrecto. La entrevista es solo uno de los elementos." },
+                    { text: "Assessment Center (Centro de Evaluación).", isCorrect: true, rationale: "¡Muy bien! Combina múltiples técnicas durante varias horas o días." },
+                    { text: "Dinámica de grupo simple.", isCorrect: false, rationale: "Incorrecto. La dinámica es solo una parte del Assessment Center." },
+                    { text: "Prueba psicométrica estandarizada.", isCorrect: false, rationale: "Incorrecto. Es un método mucho más amplio." }
+                ]
+            },
+            {
+                tag: "Redes Sociales y Empleabilidad",
+                type: "multiple",
+                question: "Si tu objetivo principal es crear una red de contactos profesionales, compartir logros y que los reclutadores te encuentren, ¿qué red es la más adecuada?",
+                options: [
+                    { text: "Instagram.", isCorrect: false, rationale: "Incorrecto. Es muy visual pero no la red profesional principal de contratación." },
+                    { text: "LinkedIn.", isCorrect: true, rationale: "¡Correcto! LinkedIn es la principal red social profesional para posicionar tu perfil y hacer networking." },
+                    { text: "TikTok.", isCorrect: false, rationale: "Incorrecto. Sirve para divulgación creativa, no reclutamiento corporativo directo." },
+                    { text: "X (Twitter).", isCorrect: false, rationale: "Incorrecto. Se usa para noticias, pero LinkedIn concentra las ofertas." }
+                ]
+            },
+            {
+                tag: "Itinerario Académico y Profesional",
+                type: "multiple",
+                question: "¿Cuál es el objetivo principal de definir un Itinerario Académico y Profesional al iniciar tu formación en FP?",
+                options: [
+                    { text: "Ensayo general para entrevistas corporativas.", isCorrect: false, rationale: "Incorrecto. El itinerario traza la ruta formativa y laboral a largo plazo." },
+                    { text: "Planificar y alinear de forma flexible tus metas, habilidades e intereses con las demandas del mercado.", isCorrect: true, rationale: "¡Perfecto! Es una ruta personalizada que guía tus decisiones educativas y profesionales presentes y futuras." },
+                    { text: "Garantizar una contratación fija sin pasar por selección.", isCorrect: false, rationale: "Incorrecto. Te prepara mejor, pero no exime de procesos de selección." },
+                    { text: "Sustituir por completo al Currículum Vitae.", isCorrect: false, rationale: "Incorrecto. Es una estrategia interna, no un documento de presentación." }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let currentOrderItems = [];
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('stats-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestion];
+            
+            // Update UI Counters
+            document.getElementById('progress-text').innerText = `${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('score-text').innerText = `${score} pts`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Set Question Content
+            document.getElementById('question-tag').innerText = q.tag;
+            document.getElementById('question-text').innerText = q.question;
+            
+            // Reset Feedback & Button
+            document.getElementById('feedback-container').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            if (q.type === 'order') {
+                currentOrderItems = [...q.items].sort(() => Math.random() - 0.5);
+                renderOrderItems();
+            } else if (q.type === 'checkbox') {
+                q.options.forEach((opt, idx) => {
+                    const label = document.createElement('label');
+                    label.className = `option-btn w-full text-left p-4 rounded-2xl glass-card border border-white/10 flex items-center gap-3.5 text-sm md:text-base cursor-pointer`;
+                    label.innerHTML = `
+                        <input type="checkbox" name="multi-option" value="${idx}" class="w-5 h-5 rounded accent-indigo-500 cursor-pointer">
+                        <span class="leading-relaxed">${opt.text}</span>
+                    `;
+                    container.appendChild(label);
+                });
+
+                // Submit multiple choice button
+                const submitBtn = document.createElement('button');
+                submitBtn.className = "mt-4 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2";
+                submitBtn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Comprobar Selección';
+                submitBtn.onclick = checkCheckboxAnswer;
+                container.appendChild(submitBtn);
+            } else {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `option-btn w-full text-left p-4 rounded-2xl glass-card border border-white/10 flex items-start gap-3.5 text-sm md:text-base`;
+                    btn.onclick = () => selectOption(idx);
+                    
+                    const letter = String.fromCharCode(65 + idx);
+                    btn.innerHTML = `
+                        <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">${letter}</span>
+                        <span class="leading-relaxed">${opt.text}</span>
+                    `;
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function renderOrderItems() {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            currentOrderItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `glass-card border border-white/10 p-3.5 rounded-2xl flex items-center justify-between gap-3 text-sm md:text-base`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-xs shrink-0">${index + 1}</span>
+                        <span class="leading-relaxed">${item.text}</span>
+                    </div>
+                    <div class="flex flex-col gap-1 shrink-0">
+                        <button onclick="moveItem(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed p-1 text-xs text-gray-400"' : 'class="p-1 hover:text-indigo-300 text-xs text-gray-300"'}>
+                            <i class="fas fa-chevron-up"></i>
+                        </button>
+                        <button onclick="moveItem(${index}, 1)" ${index === currentOrderItems.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed p-1 text-xs text-gray-400"' : 'class="p-1 hover:text-indigo-300 text-xs text-gray-300"'}>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = "mt-4 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2";
+            submitBtn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Comprobar Orden';
+            submitBtn.onclick = checkOrder;
+            container.appendChild(submitBtn);
+        }
+
+        function moveItem(index, direction) {
+            if (answered) return;
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= currentOrderItems.length) return;
+            
+            const temp = currentOrderItems[index];
+            currentOrderItems[index] = currentOrderItems[newIndex];
+            currentOrderItems[newIndex] = temp;
+            
+            renderOrderItems();
+        }
+
+        function checkOrder() {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const userOrder = currentOrderItems.map(item => item.id);
+            const isCorrect = JSON.stringify(userOrder) === JSON.stringify(q.correctOrder);
+
+            const container = document.getElementById('options-container');
+            const submitBtn = container.querySelector('button:last-child');
+            if (submitBtn) submitBtn.remove();
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('score-text').innerText = `${score} pts`;
+                showFeedback(true, "¡Orden Correcto!", q.rationale);
+            } else {
+                showFeedback(false, "Orden Incorrecto", q.rationale);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function checkCheckboxAnswer() {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const checkboxes = document.querySelectorAll('input[name="multi-option"]');
+            
+            let allCorrect = true;
+            checkboxes.forEach((cb, idx) => {
+                const isSelected = cb.checked;
+                const shouldBeSelected = q.options[idx].isCorrect;
+                if (isSelected !== shouldBeSelected) {
+                    allCorrect = false;
+                }
+            });
+
+            const container = document.getElementById('options-container');
+            const submitBtn = container.querySelector('button:last-child');
+            if (submitBtn) submitBtn.remove();
+
+            checkboxes.forEach(cb => cb.disabled = true);
+
+            if (allCorrect) {
+                score += 10;
+                document.getElementById('score-text').innerText = `${score} pts`;
+                showFeedback(true, "¡Selección Múltiple Correcta!", q.rationale);
+            } else {
+                showFeedback(false, "Selección Incorrecta", q.rationale);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const selectedOpt = q.options[index];
+            const buttons = document.querySelectorAll('#options-container button');
+
+            buttons.forEach(btn => btn.classList.remove('hover:bg-white/15', 'option-btn'));
+
+            if (selectedOpt.isCorrect) {
+                score += 10;
+                document.getElementById('score-text').innerText = `${score} pts`;
+                buttons[index].classList.add('bg-emerald-600/30', 'border-emerald-500');
+                showFeedback(true, "¡Respuesta Correcta!", selectedOpt.rationale);
+            } else {
+                buttons[index].classList.add('bg-rose-600/30', 'border-rose-500');
+                q.options.forEach((opt, idx) => {
+                    if (opt.isCorrect) {
+                        buttons[idx].classList.add('bg-emerald-600/20', 'border-emerald-500/50');
+                    }
+                });
+                showFeedback(false, "Respuesta Incorrecta", selectedOpt.rationale);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function showFeedback(isCorrect, title, text) {
+            const container = document.getElementById('feedback-container');
+            const icon = document.getElementById('feedback-icon');
+            const titleEl = document.getElementById('feedback-title');
+            const textEl = document.getElementById('feedback-text');
+
+            container.classList.remove('hidden', 'bg-emerald-950/40', 'border-emerald-500/40', 'text-emerald-200', 'bg-rose-950/40', 'border-rose-500/40', 'text-rose-200');
+
+            if (isCorrect) {
+                container.classList.add('bg-emerald-950/40', 'border-emerald-500/40', 'text-emerald-200');
+                icon.className = 'fas fa-check-circle text-emerald-400 text-xl';
+            } else {
+                container.classList.add('bg-rose-950/40', 'border-rose-500/40', 'text-rose-200');
+                icon.className = 'fas fa-times-circle text-rose-400 text-xl';
+            }
+
+            titleEl.innerText = title;
+            textEl.innerText = text;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('stats-container').classList.add('hidden');
+            
+            const endScreen = document.getElementById('end-screen');
+            endScreen.classList.remove('hidden');
+
+            const totalCorrect = score / 10;
+            document.getElementById('final-score').innerText = `${totalCorrect} / ${questions.length}`;
+
+            const iconContainer = document.getElementById('end-icon-container');
+            const icon = document.getElementById('end-icon');
+            const title = document.getElementById('end-title');
+            const subtitle = document.getElementById('end-subtitle');
+            const evalText = document.getElementById('final-eval');
+
+            const maxScore = questions.length;
+            if (totalCorrect >= maxScore * 0.8) {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/50 bg-emerald-500/20 text-emerald-400";
+                icon.className = "fas fa-trophy";
+                title.innerText = "¡Contratado/a!";
+                subtitle.innerText = "Has superado el proceso de selección con sobresaliente.";
+                evalText.innerText = "Demuestras un dominio excelente del Tema 1 y de todas las pruebas complejas. ¡Estás listo/a!";
+            } else if (totalCorrect >= maxScore * 0.5) {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-amber-500/50 bg-amber-500/20 text-amber-400";
+                icon.className = "fas fa-user-check";
+                title.innerText = "En Lista de Reserva";
+                subtitle.innerText = "Has aprobado, pero te falta un pequeño empujón para conseguir el puesto.";
+                evalText.innerText = "Tienes buena base, pero repasa los detalles sobre EURES, procesos de selección múltiple y marca personal.";
+            } else {
+                iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-rose-500/50 bg-rose-500/20 text-rose-400";
+                icon.className = "fas fa-file-excel";
+                title.innerText = "Candidatura Desestimada";
+                subtitle.innerText = "Necesitas repasar más la materia antes de tu próxima entrevista.";
+                evalText.innerText = "Te recomendamos volver a leer la presentación del Tema 1 e intentarlo de nuevo.";
+            }
+        }
+
+        function resetGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('end-screen').classList.add('hidden');
+            startGame();
+        }
+    </script>
+</body>
+</html>
