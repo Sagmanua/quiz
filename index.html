@@ -50,7 +50,7 @@
         <div id="stats-container" class="hidden flex items-center gap-6">
             <div class="text-center">
                 <p class="text-xs text-gray-400">Progreso</p>
-                <p id="progress-text" class="font-bold text-indigo-400">1 / 10</p>
+                <p id="progress-text" class="font-bold text-indigo-400">1 / 11</p>
             </div>
             <div class="text-center">
                 <p class="text-xs text-gray-400">Puntuación</p>
@@ -71,7 +71,7 @@
                 ¿Conseguirás el Empleo Soñado?
             </h2>
             <p class="text-gray-300 max-w-xl mx-auto mb-8 text-sm md:text-base leading-relaxed">
-                Has sido preseleccionado para el puesto de tus sueños, pero para firmar el contrato debes superar 10 pruebas variadas: opción única, verdadero/falso, ordenación de fases y selección múltiple (varias correctas).
+                Has sido preseleccionado para el puesto de tus sueños. Supera 11 pruebas interactivas: opción única, verdadero/falso, ordenación, selección múltiple y categorización por parejas.
             </p>
             <button onclick="startGame()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-2xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:scale-105">
                 <i class="fas fa-play mr-2"></i> Comenzar el Desafío
@@ -82,7 +82,7 @@
         <div id="game-screen" class="hidden glass-card rounded-3xl p-6 md:p-10 shadow-2xl">
             <!-- Progress Bar -->
             <div class="w-full bg-gray-700/50 rounded-full h-2.5 mb-6 overflow-hidden">
-                <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 10%"></div>
+                <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2.5 rounded-full transition-all duration-500" style="width: 9.09%"></div>
             </div>
 
             <!-- Question Tag & Title -->
@@ -97,7 +97,7 @@
 
             <!-- Options / Interactive Area -->
             <div id="options-container" class="grid grid-cols-1 gap-3.5 mb-6">
-                <!-- Options, Order items, or Multi-select injected dynamically -->
+                <!-- Dynamic Content -->
             </div>
 
             <!-- Feedback & Next Button -->
@@ -126,7 +126,7 @@
 
             <div class="bg-black/20 rounded-2xl p-6 max-w-sm mx-auto mb-8 border border-white/10">
                 <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Puntuación Final</p>
-                <p id="final-score" class="text-4xl font-extrabold text-emerald-400 mb-2">0/10</p>
+                <p id="final-score" class="text-4xl font-extrabold text-emerald-400 mb-2">0/11</p>
                 <p id="final-eval" class="text-xs text-gray-300 italic"></p>
             </div>
 
@@ -154,6 +154,19 @@
                     { text: "Autocandidatura activa, pues estás enviando tu CV impreso.", isCorrect: false, rationale: "Incorrecto. Asistir a eventos de networking es una fuente indirecta." },
                     { text: "Canal público de intermediación laboral.", isCorrect: false, rationale: "Incorrecto. Salvo que sea del SEPE, se considera un canal de networking." }
                 ]
+            },
+            {
+                tag: "Categorización (Match)",
+                type: "match",
+                question: "Relaciona cada herramienta o concepto con su categoría correcta del mercado laboral:",
+                pairs: [
+                    { term: "Red EURES", category: "Unión Europea" },
+                    { term: "SEPE", category: "Público Nacional" },
+                    { term: "InfoJobs", category: "Privado Comercial" },
+                    { term: "LinkedIn", category: "Red Profesional" }
+                ],
+                categories: ["Unión Europea", "Público Nacional", "Privado Comercial", "Red Profesional"],
+                rationale: "¡Correcto! Cada plataforma cumple un rol institucional, público nacional, comercial privado o red social profesional específica."
             },
             {
                 tag: "Selección Múltiple (Varias Respuestas)",
@@ -213,26 +226,18 @@
                 rationale: "¡Excelente! La marca personal requiere coherencia, valor diferencial y buena gestión de huella digital."
             },
             {
-                tag: "Verdadero o Falso",
+                tag: "Estrategias de Búsqueda de Empleo",
                 type: "multiple",
-                question: "Verdadero o Falso: El 'mercado oculto de trabajo' hace referencia exclusivamente a ofertas ilegales o de empleo sumergido que no se pueden legalizar.",
+                question: "Dentro de la adaptación de los documentos de candidatura al sector, ¿cómo se define el uso de términos y frases que son habituales en dicho ámbito profesional?",
                 options: [
-                    { text: "Verdadero", isCorrect: false, rationale: "Incorrecto. El mercado oculto son puestos cubiertos por contactos o autocandidatura sin publicar." },
-                    { text: "Falso", isCorrect: true, rationale: "¡Correcto! Son vacantes que las empresas cubren internamente o por recomendación sin difusión pública." }
+                    { text: "Competencias específicas.", isCorrect: false, rationale: "Incorrecto. Las competencias específicas se centran en identificar y enfatizar las habilidades y experiencias más relevantes." },
+                    { text: "Palabras clave.", isCorrect: true, rationale: "¡Correcto! El uso de palabras clave (términos y frases comunes del sector) ayuda a superar los filtros automáticos y demuestra interés genuino." },
+                    { text: "Resaltar capacitación.", isCorrect: false, rationale: "Incorrecto. Esto se refiere a incluir certificaciones y cursos de formación continua pertinentes." },
+                    { text: "Personalización de la carta.", isCorrect: false, rationale: "Incorrecto. La personalización de la carta busca alinear el documento con la cultura, valores y proyectos de la empresa." }
                 ]
             },
-            {
-                tag: "Procesos de Selección Avanzados",
-                type: "multiple",
-                question: "Una empresa te convoca a una jornada donde harás entrevistas, pruebas psicométricas y simulaciones grupales evaluadas de forma integral. ¿Cómo se denomina?",
-                options: [
-                    { text: "Entrevista estructurada por competencias.", isCorrect: false, rationale: "Incorrecto. La entrevista es solo uno de los elementos." },
-                    { text: "Assessment Center (Centro de Evaluación).", isCorrect: true, rationale: "¡Muy bien! Combina múltiples técnicas durante varias horas o días." },
-                    { text: "Dinámica de grupo simple.", isCorrect: false, rationale: "Incorrecto. La dinámica es solo una parte del Assessment Center." },
-                    { text: "Prueba psicométrica estandarizada.", isCorrect: false, rationale: "Incorrecto. Es un método mucho más amplio." }
-                ]
-            },
-            {
+
+            {                                                                           
                 tag: "Redes Sociales y Empleabilidad",
                 type: "multiple",
                 question: "Si tu objetivo principal es crear una red de contactos profesionales, compartir logros y que los reclutadores te encuentren, ¿qué red es la más adecuada?",
@@ -291,6 +296,8 @@
             if (q.type === 'order') {
                 currentOrderItems = [...q.items].sort(() => Math.random() - 0.5);
                 renderOrderItems();
+            } else if (q.type === 'match') {
+                renderMatchItems(q);
             } else if (q.type === 'checkbox') {
                 q.options.forEach((opt, idx) => {
                     const label = document.createElement('label');
@@ -302,7 +309,6 @@
                     container.appendChild(label);
                 });
 
-                // Submit multiple choice button
                 const submitBtn = document.createElement('button');
                 submitBtn.className = "mt-4 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2";
                 submitBtn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Comprobar Selección';
@@ -322,6 +328,79 @@
                     container.appendChild(btn);
                 });
             }
+        }
+
+        function renderMatchItems(q) {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const shuffledPairs = [...q.pairs].sort(() => Math.random() - 0.5);
+
+            shuffledPairs.forEach((pair, idx) => {
+                const row = document.createElement('div');
+                row.className = 'glass-card border border-white/10 p-3.5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-sm md:text-base';
+                
+                let optionsHTML = `<option value="">-- Selecciona categoría --</option>`;
+                q.categories.forEach(cat => {
+                    optionsHTML += `<option value="${cat}" class="bg-slate-900 text-white">${cat}</option>`;
+                });
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 w-full sm:w-1/2">
+                        <span class="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-xs shrink-0">${idx + 1}</span>
+                        <span class="font-semibold text-white">${pair.term}</span>
+                    </div>
+                    <div class="w-full sm:w-1/2">
+                        <select data-term="${pair.term}" class="match-select w-full bg-black/40 border border-white/20 rounded-xl p-2.5 text-white text-sm focus:outline-none focus:border-indigo-400">
+                            ${optionsHTML}
+                        </select>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = "mt-4 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2";
+            submitBtn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Comprobar Categorización';
+            submitBtn.onclick = checkMatchAnswers;
+            container.appendChild(submitBtn);
+        }
+
+        function checkMatchAnswers() {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const selects = document.querySelectorAll('.match-select');
+            let allCorrect = true;
+
+            selects.forEach(sel => {
+                const term = sel.getAttribute('data-term');
+                const selectedVal = sel.value;
+                const correctPair = q.pairs.find(p => p.term === term);
+                
+                sel.disabled = true;
+                if (selectedVal === correctPair.category) {
+                    sel.classList.add('bg-emerald-600/30', 'border-emerald-500');
+                } else {
+                    allCorrect = false;
+                    sel.classList.add('bg-rose-600/30', 'border-rose-500');
+                }
+            });
+
+            const container = document.getElementById('options-container');
+            const submitBtn = container.querySelector('button:last-child');
+            if (submitBtn) submitBtn.remove();
+
+            if (allCorrect) {
+                score += 10;
+                document.getElementById('score-text').innerText = `${score} pts`;
+                showFeedback(true, "¡Categorización Correcta!", q.rationale);
+            } else {
+                showFeedback(false, "Hay errores en la categorización", q.rationale);
+            }
+
+            document.getElementById('next-btn').classList.remove('hidden');
         }
 
         function renderOrderItems() {
@@ -508,7 +587,7 @@
                 icon.className = "fas fa-user-check";
                 title.innerText = "En Lista de Reserva";
                 subtitle.innerText = "Has aprobado, pero te falta un pequeño empujón para conseguir el puesto.";
-                evalText.innerText = "Tienes buena base, pero repasa los detalles sobre EURES, procesos de selección múltiple y marca personal.";
+                evalText.innerText = "Tienes buena base, pero repasa los detalles sobre categorización, EURES y procesos de selección.";
             } else {
                 iconContainer.className = "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 border border-rose-500/50 bg-rose-500/20 text-rose-400";
                 icon.className = "fas fa-file-excel";
